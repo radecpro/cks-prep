@@ -32,7 +32,7 @@ Calico is pinned to v3.32.2 using the manifest installation in the [official kin
 | `cluster/` | kind topology and cluster notes |
 | `scripts/` | workstation checks, cluster creation, CNI installation and status |
 | `curriculum/` | six domain study checklists and authoritative references |
-| `labs/` | numbered focused lab slots; currently planned, not implemented |
+| `labs/` | numbered focused labs; Lab 01 ready, remaining labs planned |
 | `scenarios/` | mixed troubleshooting scenarios |
 | `mocks/` | timed multi-task practice and scoring |
 | `templates/` | task and review templates |
@@ -41,7 +41,7 @@ Calico is pinned to v3.32.2 using the manifest installation in the [official kin
 
 ## Practice workflow
 
-1. Ask for a lab in `labs/01-security-context` with `TASK.md`, `setup.sh`, and `verify.sh`; no solutions or hints.
+1. Open `labs/01-security-context/TASK.md` for the first exercise. Setup and automated grading are provided; no solution is included.
 2. Run setup, read the task, start a timer and solve it yourself.
 3. Run verification. Ask for a read-only review; fixes require a separate request.
 4. Record results in `progress.md`, including failed requirements and a retry date.

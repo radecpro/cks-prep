@@ -15,7 +15,7 @@
 
 | Lab | Status | Last attempt | Minutes | Hints | Result / evidence | Retry |
 | --- | --- | --- | --- | --- | --- | --- |
-| 01-security-context | Planned | — | — | — | Not assessed | — |
+| 01-security-context | Passed | 2026-09-11 | Not recorded | Not recorded | verify.sh: 28 checks passed, exit 0 | — |
 | 02-rbac | Planned | — | — | — | Not assessed | — |
 | 03-network-policy | Planned | — | — | — | Not assessed | — |
 | 04-pod-security | Planned | — | — | — | Not assessed | — |
@@ -30,8 +30,16 @@
 
 ## Weak areas
 
-Not assessed. Do not infer strengths from work experience alone.
+Lab 01: no failed requirements observed in verification on 2026-09-11. Timing and hint usage were not recorded; other domains remain unassessed.
 
 ## Attempt log
 
 Use `templates/REVIEW.md` after each attempt; record failed requirements and evidence here.
+
+### 2026-09-11 — Lab 01 verification
+
+- Command: `./labs/01-security-context/verify.sh`
+- Result: PASS; 28 checks passed, zero failures, exit code 0.
+- Evidence: Deployment and Pod security settings passed; runtime UID/GID, privilege escalation protection, capability sets and read-only root mount passed. One available replica, completed rollout, expected Service HTTP response and preserved application configuration passed.
+- Cluster resources were not modified during grading.
+- Elapsed attempt time and hints: not recorded. No failed requirements to remediate from this run.
