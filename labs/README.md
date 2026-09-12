@@ -1,6 +1,6 @@
 # Focused labs
 
-Start with `01-security-context`. Lab 01 includes setup, task and automated verification. Remaining directories contain planning notes only.
+Start with `01-security-context`. Labs 01 and 02 include setup, tasks and automated verification. Remaining directories contain planning notes only.
 
 - [SecurityContext and capabilities](01-security-context/README.md)
 - [RBAC and ServiceAccounts](02-rbac/README.md)
