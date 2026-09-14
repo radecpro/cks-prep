@@ -17,7 +17,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 01-security-context | Passed | 2026-09-11 | Not recorded | Not recorded | verify.sh: 28 checks passed, exit 0 | — |
 | 02-rbac | Passed | 2026-09-12 | Not recorded | Not recorded | verify.sh: 42 checks passed, exit 0 | — |
-| 03-network-policy | Planned | — | — | — | Not assessed | — |
+| 03-network-policy | Passed | 2026-09-14 | Not recorded | DNS diagnosis on first attempt | Retry: 49 passed, 0 failed; exit 0 | — |
 | 04-pod-security | Planned | — | — | — | Not assessed | — |
 | 05-secrets | Planned | — | — | — | Not assessed | — |
 | 06-seccomp | Planned | — | — | — | Not assessed | — |
@@ -30,7 +30,7 @@
 
 ## Weak areas
 
-Lab 01: no failed requirements observed in verification on 2026-09-11. Lab 02: no failed requirements observed in verification on 2026-09-12. Timing and hint usage were not recorded; remaining domains are unassessed.
+Lab 01: no failed requirements observed in verification on 2026-09-11. Lab 02: no failed requirements observed in verification on 2026-09-12. Lab 03: namespace label selection caused DNS failures on the first attempt; corrected by the learner and passing on retry, 2026-09-14. Revisit namespace selectors in later mixed practice. Timing was not recorded; remaining domains are unassessed.
 
 ## Attempt log
 
@@ -58,3 +58,33 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - Evidence: exact Role permissions and binding subjects; positive and negative authorization checks; default ServiceAccount access removed; Deployment and Pod identity; disabled token automount and absent runtime token; completed rollout and unchanged sample data.
 - Cluster resources were not modified during grading.
 - Attempt duration and hints: not recorded. No failed requirements identified by this verifier.
+
+### 2026-09-12 — Lab 03 preparation (maintainer QA)
+
+- Created NetworkPolicy exercise with four Pods, one Service, default-deny requirements and a traffic matrix.
+- Disposable `cks-lab-03-qa`: unrestricted baseline failed 25 checks; passing configuration passed all 49 checks; opening TCP 9090 triggered the expected single failure. Duplicate setup correctly refused the existing namespace.
+- Evidence: `.local/lab03-initial.log`, `.local/lab03-passing.log`, `.local/lab03-regression.log`, `.local/lab03-duplicate-setup.log`.
+- Shell syntax and Python parsing passed. QA resources and temporary passing configuration removed; learner namespace prepared without policies.
+- Verification limitations: bounded traffic matrix; review extra policy grants, namespace/DNS scope and both directions independently. TCP DNS checks connection establishment only. No full external-egress test.
+- Learner attempt, elapsed time, hints and weak areas: not assessed. Maintainer QA is not a passing learner attempt.
+
+### 2026-09-14 — Lab 03 verification
+
+- Command: `./labs/03-network-policy/verify.sh`; exit 1, 40 checks passed and 9 failed.
+- Evidence: `.local/lab03-attempt-2026-09-14.log`.
+- Failed requirements: UDP DNS resolution and TCP DNS connectivity from all four Pods (8 checks), plus frontend access to the API Service by DNS name (1 check).
+- Passed: fixture integrity and readiness, local listeners, default denial in both directions, direct frontend-to-API TCP 8080 and every forbidden Pod/port connection in the matrix.
+- Additional read-only test: frontend HTTP to API Service ClusterIP returned `cks-lab-03-ready`; Service networking works without DNS.
+- Diagnosis: applied `allow-dns` selects namespace label `name=kube-system`, absent on the actual namespace, which has `kubernetes.io/metadata.name=kube-system`. CoreDNS Pods match the Pod selector and have ready endpoints. The combined peer therefore selects no DNS destinations.
+- Weak area: distinguish namespace names from namespace labels when using NetworkPolicy selectors.
+- Elapsed attempt time: not recorded. Assistance: targeted DNS diagnosis supplied after the learner reported the problem. No policies, workloads or learner manifests changed during review.
+- Retry: after learner correction. Bounded verifier limitations remain as documented in the lab README.
+
+### 2026-09-14 — Lab 03 retry verification
+
+- Command: `./labs/03-network-policy/verify.sh`; exit 0, all 49 checks passed, zero failures.
+- Evidence: `.local/lab03-attempt-2026-09-14-retry.log`.
+- DNS UDP resolution and TCP connectivity passed for all four Pods; frontend access via API DNS name and direct Pod IP passed. Every denied Pod/port pair remained blocked; fixture integrity and readiness passed.
+- Read-only policy review confirmed the corrected namespace label selector and combined CoreDNS Pod selector, UDP/TCP 53 only, namespace-wide default deny in both directions, and the scoped frontend-to-API TCP 8080 exceptions without additional grants in these four policies.
+- Learner corrected the policy after the prior DNS diagnosis. No additional hints this retry; attempt duration not recorded. No solution files or cluster resources modified during grading.
+- No failed requirements remain in this assessment. TCP DNS validation checks connection establishment; traffic testing remains bounded as documented in the README.
