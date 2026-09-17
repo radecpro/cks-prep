@@ -18,7 +18,7 @@
 | 01-security-context | Passed | 2026-09-11 | Not recorded | Not recorded | verify.sh: 28 checks passed, exit 0 | — |
 | 02-rbac | Passed | 2026-09-12 | Not recorded | Not recorded | verify.sh: 42 checks passed, exit 0 | — |
 | 03-network-policy | Passed | 2026-09-14 | Not recorded | DNS diagnosis on first attempt | Retry: 49 passed, 0 failed; exit 0 | — |
-| 04-pod-security | Planned | — | — | — | Not assessed | — |
+| 04-pod-security | Passed | 2026-09-14 | Not recorded | None provided during grading | 16 passed, 0 failed; exit 0 | — |
 | 05-secrets | Planned | — | — | — | Not assessed | — |
 | 06-seccomp | Planned | — | — | — | Not assessed | — |
 | 07-control-plane-hardening | Planned | — | — | — | Not assessed | — |
@@ -30,7 +30,7 @@
 
 ## Weak areas
 
-Lab 01: no failed requirements observed in verification on 2026-09-11. Lab 02: no failed requirements observed in verification on 2026-09-12. Lab 03: namespace label selection caused DNS failures on the first attempt; corrected by the learner and passing on retry, 2026-09-14. Revisit namespace selectors in later mixed practice. Timing was not recorded; remaining domains are unassessed.
+Lab 01: no failed requirements observed in verification on 2026-09-11. Lab 02: no failed requirements observed in verification on 2026-09-12. Lab 03: namespace label selection caused DNS failures on the first attempt; corrected by the learner and passing on retry, 2026-09-14. Revisit namespace selectors in later mixed practice. Lab 04: no failed requirements observed on 2026-09-14. Timing was not recorded; remaining domains are unassessed.
 
 ## Attempt log
 
@@ -88,3 +88,24 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - Read-only policy review confirmed the corrected namespace label selector and combined CoreDNS Pod selector, UDP/TCP 53 only, namespace-wide default deny in both directions, and the scoped frontend-to-API TCP 8080 exceptions without additional grants in these four policies.
 - Learner corrected the policy after the prior DNS diagnosis. No additional hints this retry; attempt duration not recorded. No solution files or cluster resources modified during grading.
 - No failed requirements remain in this assessment. TCP DNS validation checks connection establishment; traffic testing remains bounded as documented in the README.
+
+### 2026-09-14 — Lab 03 cleanup and Lab 04 preparation
+
+- Lab 03 source, learner manifests and passing retry committed and pushed as `ca5d188`; remote main verified at the same commit.
+- Removed owned `cks-lab-03` namespace after publication.
+- Authored Lab 04 Pod Security Admission exercise. QA baseline: 10 passed, 6 failed. Compliant configuration: all 16 passed. Weakening enforcement to Baseline: 14 passed, 2 failed, including the privilege escalation admission probe.
+- Corrected the privileged negative probe during QA to avoid contradictory settings rejected by API validation before Pod Security Admission. Waiting for old rollout Pods to terminate is required for the final single-Pod check.
+- Evidence: `.local/lab04-initial.log`, `.local/lab04-passing.log`, `.local/lab04-regression.log`, `.local/lab04-duplicate-setup.log`.
+- Duplicate setup refused the existing namespace. Changed shell scripts passed syntax checks, Python parsing passed, and git diff whitespace checks passed.
+- Removed QA namespace and temporary passing patch; prepared learner namespace `cks-lab-04` in the original insecure state with an available status Deployment.
+- No learner attempt, duration or hints recorded for Lab 04. Admission tests use non-persistent server-side dry runs; audit-log delivery is not tested. Maintainer QA is not a learner assessment.
+
+### 2026-09-14 — Lab 04 verification
+
+- Command: `./labs/04-pod-security/verify.sh`; exit 0, all 16 checks passed, zero failures.
+- Evidence: `.local/lab04-attempt.log`.
+- Requirements passed: Restricted enforce/warn/audit labels pinned to v1.37; ownership label retained; preserved application fixtures; completed rollout with one Ready available replica; runtime web process UID/GID 10000; original Service HTTP response.
+- Admission evidence: fresh template and running Pod specifications accepted in server-side dry runs; privileged and privilege-escalation probes rejected by Pod Security Admission. No probe Pods persisted.
+- Failed requirements / observed weak areas: none in this assessment. Attempt duration and outside hint usage not recorded; no hints provided during grading.
+- Verification limits: audit configuration labels checked, audit-log delivery not tested; no exhaustive audit of cluster-wide admission configuration changes.
+- Learner manifests and cluster resources were not modified. No cleanup performed.
