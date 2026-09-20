@@ -19,7 +19,7 @@
 | 02-rbac | Passed | 2026-09-12 | Not recorded | Not recorded | verify.sh: 42 checks passed, exit 0 | — |
 | 03-network-policy | Passed | 2026-09-14 | Not recorded | DNS diagnosis on first attempt | Retry: 49 passed, 0 failed; exit 0 | — |
 | 04-pod-security | Passed | 2026-09-14 | Not recorded | None provided during grading | 16 passed, 0 failed; exit 0 | — |
-| 05-secrets | Planned | — | — | — | Not assessed | — |
+| 05-secrets | Passed | 2026-09-20 | Not recorded | None during grading | 32 passed, 0 failed; exit 0 | — |
 | 06-seccomp | Planned | — | — | — | Not assessed | — |
 | 07-control-plane-hardening | Planned | — | — | — | Not assessed | — |
 | 08-cis-benchmarks | Planned | — | — | — | Not assessed | — |
@@ -109,3 +109,21 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - Failed requirements / observed weak areas: none in this assessment. Attempt duration and outside hint usage not recorded; no hints provided during grading.
 - Verification limits: audit configuration labels checked, audit-log delivery not tested; no exhaustive audit of cluster-wide admission configuration changes.
 - Learner manifests and cluster resources were not modified. No cleanup performed.
+
+### 2026-09-17 — Lab 04 cleanup and Lab 05 preparation
+
+- Lab 04 source and passing assessment committed and pushed as `193a47e`; remote main verified at the same commit. Bundled Git and GitHub CLI authentication used because Apple Git requires Xcode license acceptance; no system settings changed.
+- Removed owned `cks-lab-04` namespace after publication.
+- Authored Lab 05 Secret exposure exercise with synthetic credentials, two containers, scoped projection and runtime file/environment checks.
+- QA baseline: 21 passed, 11 failed. Passing configuration: all 32 passed. Reintroducing a sidecar credential mount and broad file permissions: 26 passed, 6 failed. Duplicate setup refused the existing namespace.
+- Evidence: `.local/lab05-initial.log`, `.local/lab05-passing.log`, `.local/lab05-regression.log`, `.local/lab05-duplicate-setup.log`.
+- Shell syntax, Python parsing and Git whitespace checks passed. QA namespace and temporary passing patch removed. Learner namespace `cks-lab-05` prepared in its original insecure state with a Ready two-container Pod.
+- Learner attempt, timing, hints and weak areas: not assessed. Current process environments and logs are tested; historical logs, external stores, rotation and etcd encryption at rest are not assessed.
+
+### 2026-09-20 — Lab 05 verification
+
+- Command: `./labs/05-secrets/verify.sh`; exit 0, all 32 checks passed.
+- Evidence: `.local/lab05-attempt-2026-09-20.log`.
+- Passed: original Secret and application fixtures; template and running Pod projection restricted to password; read-only mounts and runtime mode 0440; no sidecar mounts or credential files; no environment injection or credential values in current process environments/logs; completed rollout and healthy Service response.
+- Failed requirements / observed weak areas: none. Attempt duration and outside hints not recorded; no hints provided during grading.
+- No cluster resources or learner solution files changed during assessment. Historical/external logs and encryption at rest remain outside this lab's checks.
