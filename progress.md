@@ -20,7 +20,7 @@
 | 03-network-policy | Passed | 2026-09-14 | Not recorded | DNS diagnosis on first attempt | Retry: 49 passed, 0 failed; exit 0 | — |
 | 04-pod-security | Passed | 2026-09-14 | Not recorded | None provided during grading | 16 passed, 0 failed; exit 0 | — |
 | 05-secrets | Passed | 2026-09-20 | Not recorded | None during grading | 32 passed, 0 failed; exit 0 | — |
-| 06-seccomp | Planned | — | — | — | Not assessed | — |
+| 06-seccomp | Passed | 2026-09-21 | Not recorded | None during grading | 25 passed, 0 failed; exit 0 | — |
 | 07-control-plane-hardening | Planned | — | — | — | Not assessed | — |
 | 08-cis-benchmarks | Planned | — | — | — | Not assessed | — |
 | 09-supply-chain | Planned | — | — | — | Not assessed | — |
@@ -127,3 +127,20 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - Passed: original Secret and application fixtures; template and running Pod projection restricted to password; read-only mounts and runtime mode 0440; no sidecar mounts or credential files; no environment injection or credential values in current process environments/logs; completed rollout and healthy Service response.
 - Failed requirements / observed weak areas: none. Attempt duration and outside hints not recorded; no hints provided during grading.
 - No cluster resources or learner solution files changed during assessment. Historical/external logs and encryption at rest remain outside this lab's checks.
+
+### 2026-09-20 — Lab 05 cleanup and Lab 06 preparation
+
+- Lab 05 exercise and passing assessment committed and pushed as `f5136f5`; remote main verified at that commit. Removed owned `cks-lab-05` namespace after publication.
+- Authored Lab 06 RuntimeDefault seccomp exercise with two containers, Pod/container profile checks and PID 1 runtime evidence. No node or cluster-wide configuration changes.
+- QA baseline: 17 passed, 8 failed, including filter-mode checks for both processes. Passing state: 25 passed. Sidecar Unconfined regression: 22 passed, 3 failed (template, running Pod, runtime filter mode).
+- Evidence: `.local/lab06-initial.log`, `.local/lab06-passing.log`, `.local/lab06-regression.log`, `.local/lab06-duplicate-setup.log`.
+- Duplicate setup refused the existing namespace. Shell syntax, Python parsing and Git whitespace checks passed. QA namespace and temporary patch removed; original insecure learner environment prepared in `cks-lab-06`.
+- Runtime seccomp mode changes were observed on this kind/containerd environment. Exact syscall allowlists, custom Localhost profiles and host-level default settings are not assessed.
+- Learner attempt, timing, hints and weak areas for Lab 06: not assessed. Lab 05 had no failed requirements in the observed assessment.
+
+### 2026-09-21 — Lab 06 verification
+
+- Read-only `./labs/06-seccomp/verify.sh`: all 25 passed, exit 0. Evidence: `.local/lab06-attempt-2026-09-21.log`.
+- Both template and live Pod use RuntimeDefault effectively. Both PID 1 processes report filter mode; identity, privilege constraints, original fixtures, rollout and Service response passed.
+- No failed requirements observed. Duration and outside hint use not recorded; no hints supplied during grading. Exact syscall allowlists and custom profiles were not assessed.
+- No learner manifests or cluster resources changed during verification.
