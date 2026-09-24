@@ -23,7 +23,7 @@
 | 06-seccomp | Passed | 2026-09-21 | Not recorded | None during grading | 25 passed, 0 failed; exit 0 | — |
 | 07-control-plane-hardening | Passed | 2026-09-21 | Not recorded | None during grading | 17 passed, 0 failed; exit 0 | — |
 | 08-cis-benchmarks | Passed | 2026-09-24 | Not recorded | None during grading | Selected controls passed; 10/10 verifier checks | — |
-| 09-supply-chain | Planned | — | — | — | Not assessed | — |
+| 09-supply-chain | Passed | 2026-09-24 | Not recorded | None during grading | 21 passed, 0 failed; exit 0 | — |
 | 10-audit-logging | Planned | — | — | — | Not assessed | — |
 | 11-runtime-security | Planned | — | — | — | Not assessed | — |
 | 12-system-hardening | Planned | — | — | — | Not assessed | — |
@@ -180,3 +180,20 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - `./labs/08-cis-benchmarks/verify.sh`: all 10 checks passed, exit 0. Original file contents and active config path preserved; kubelet, API, three nodes and target health Pod healthy; exec worked.
 - No failed requirements observed in this selected-control assessment. Duration and outside hints not recorded; none provided during grading. No learner or cluster resources changed during verification.
 - Passing these two checks does not establish complete CIS compliance.
+
+### 2026-09-24 — Lab 08 cleanup and Lab 09 preparation
+
+- Lab 08 source and passing result committed and pushed as `bdc825b`; remote main verified. Original worker file metadata and contents restored, and the owned namespace removed.
+- Lab 09 uses the cached BusyBox digest approved at setup and two cluster-scoped ValidatingAdmissionPolicies plus bindings scoped to the exact lab namespace. Bindings begin in Audit; workload uses a mutable tag. The approved digest is saved in ignored `.local/lab09-state/` and exposed in the lab ConfigMap.
+- QA: initial audit-only/tagged state 11 passed and 10 failed; enforced digest-pinned state 21 passed and 0 failed. Reverting the Pod binding to Audit caused 4 failures after admission propagation. A tag moved during QA, demonstrating why a saved digest must remain authoritative; the setup/recovery identity check was corrected.
+- Evidence: `.local/lab09-initial.log`, `.local/lab09-passing.log`, `.local/lab09-regression.log`, `.local/lab09-duplicate-setup.log`, `.local/lab09-qa-cleanup.log`.
+- Duplicate setup refused existing state. QA cleanup removed both owned bindings, both policies and QA namespace. Shell syntax, Python parsing and Git whitespace checks passed.
+- Fresh learner namespace `cks-lab-09` prepared with audit-only bindings. Learner attempt, duration, hints and weak areas not assessed. Signature, vulnerability and SBOM verification are outside this exercise.
+
+### 2026-09-24 — Lab 09 learner verification
+
+- `./labs/09-supply-chain/verify.sh`: 21 passed, zero failures, exit 0. Evidence: `.local/lab09-attempt.log`.
+- Both lab admission bindings enforce Deny in the intended namespace. Dry-run Pods and Deployments with the approved digest were accepted; mutable tags and unapproved regular or init containers were rejected.
+- Deployment and running Pod reference the approved digest; runtime imageID matches. Rollout, Service response and original fixtures passed.
+- No failed requirements observed. Duration and outside hints not recorded; none provided during grading. No learner or cluster resources changed during verification.
+- Checks establish this lab's image identity and admission behavior, not image signature, vulnerability or SBOM validation.
