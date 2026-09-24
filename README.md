@@ -32,7 +32,7 @@ Calico is pinned to v3.32.2 using the manifest installation in the [official kin
 | `cluster/` | kind topology and cluster notes |
 | `scripts/` | workstation checks, cluster creation, CNI installation and status |
 | `curriculum/` | six domain study checklists and authoritative references |
-| `labs/` | numbered focused labs; Labs 01–06 available, remaining labs planned |
+| `labs/` | numbered focused labs; Labs 01–07 available, remaining labs planned |
 | `scenarios/` | mixed troubleshooting scenarios |
 | `mocks/` | timed multi-task practice and scoring |
 | `templates/` | task and review templates |

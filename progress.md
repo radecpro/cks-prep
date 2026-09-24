@@ -21,7 +21,7 @@
 | 04-pod-security | Passed | 2026-09-14 | Not recorded | None provided during grading | 16 passed, 0 failed; exit 0 | — |
 | 05-secrets | Passed | 2026-09-20 | Not recorded | None during grading | 32 passed, 0 failed; exit 0 | — |
 | 06-seccomp | Passed | 2026-09-21 | Not recorded | None during grading | 25 passed, 0 failed; exit 0 | — |
-| 07-control-plane-hardening | Planned | — | — | — | Not assessed | — |
+| 07-control-plane-hardening | Passed | 2026-09-21 | Not recorded | None during grading | 17 passed, 0 failed; exit 0 | — |
 | 08-cis-benchmarks | Planned | — | — | — | Not assessed | — |
 | 09-supply-chain | Planned | — | — | — | Not assessed | — |
 | 10-audit-logging | Planned | — | — | — | Not assessed | — |
@@ -144,3 +144,22 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - Both template and live Pod use RuntimeDefault effectively. Both PID 1 processes report filter mode; identity, privilege constraints, original fixtures, rollout and Service response passed.
 - No failed requirements observed. Duration and outside hint use not recorded; no hints supplied during grading. Exact syscall allowlists and custom profiles were not assessed.
 - No learner manifests or cluster resources changed during verification.
+
+### 2026-09-21 — Lab 06 cleanup and Lab 07 preparation
+
+- Lab 06 exercise, learner manifest and passing assessment committed and pushed as `49dcb1a`; verified remote main. Removed its owned namespace.
+- Lab 07 is a kubelet-hardening exercise on `cks-worker2`. Node changes and rollback documented before execution; setup backs up original file/effective configuration and container identity under ignored `.local/lab07-state/`.
+- QA: insecure baseline 10 passed / 7 failed; repaired disk without restart 12 / 5; fully loaded repaired state 17 / 0; insecure saved port regression while live settings remained hardened 16 / 1. Shortly after restart exec/logs needed kubelet synchronization before passing.
+- Evidence: `.local/lab07-initial.log`, `.local/lab07-not-restarted.log`, `.local/lab07-passing.log`, `.local/lab07-regression.log`, `.local/lab07-duplicate-setup.log`, `.local/lab07-rollback.log`.
+- Duplicate setup refused existing recovery state. Cleanup verified original file byte-for-byte, original effective settings and worker readiness, then removed QA namespace and recovery state. Shell syntax, Python parsing and Git whitespace checks passed.
+- Learner setup then saved a fresh original backup, enabled the two insecure kubelet settings, and created the Ready health workload in `cks-lab-07`. No API-server configuration or other node settings changed.
+- Lab 07 learner attempt, duration, hints and weak areas: not assessed. This is selected kubelet hardening, not a full control-plane/CIS audit.
+
+### 2026-09-21 — Lab 07 verification
+
+- Read-only `./labs/07-control-plane-hardening/verify.sh`: 17 passed, zero failures, exit 0. Evidence: `.local/lab07-attempt-2026-09-21.log`.
+- Disk and effective kubelet settings disable read-only serving and anonymous authentication. Other effective settings match the saved baseline; kubelet is active.
+- TCP 10255 refused local and cross-node connections; anonymous HTTPS `/pods` returned 401. Authenticated configuration access, exec, logs and Service HTTP remained functional.
+- All three nodes Ready, API healthy, original health fixtures preserved and health Pod Ready on the target worker.
+- No failed requirements observed. Attempt duration and outside hints not recorded; no hints supplied during grading. This verifies selected kubelet controls, not an exhaustive control-plane audit.
+- No node configuration, learner files or cluster resources modified during grading. Recovery state retained; no cleanup performed.
