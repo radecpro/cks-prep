@@ -22,7 +22,7 @@
 | 05-secrets | Passed | 2026-09-20 | Not recorded | None during grading | 32 passed, 0 failed; exit 0 | — |
 | 06-seccomp | Passed | 2026-09-21 | Not recorded | None during grading | 25 passed, 0 failed; exit 0 | — |
 | 07-control-plane-hardening | Passed | 2026-09-21 | Not recorded | None during grading | 17 passed, 0 failed; exit 0 | — |
-| 08-cis-benchmarks | Planned | — | — | — | Not assessed | — |
+| 08-cis-benchmarks | Passed | 2026-09-24 | Not recorded | None during grading | Selected controls passed; 10/10 verifier checks | — |
 | 09-supply-chain | Planned | — | — | — | Not assessed | — |
 | 10-audit-logging | Planned | — | — | — | Not assessed | — |
 | 11-runtime-security | Planned | — | — | — | Not assessed | — |
@@ -163,3 +163,20 @@ Use `templates/REVIEW.md` after each attempt; record failed requirements and evi
 - All three nodes Ready, API healthy, original health fixtures preserved and health Pod Ready on the target worker.
 - No failed requirements observed. Attempt duration and outside hints not recorded; no hints supplied during grading. This verifies selected kubelet controls, not an exhaustive control-plane audit.
 - No node configuration, learner files or cluster resources modified during grading. Recovery state retained; no cleanup performed.
+
+### 2026-09-24 — Lab 07 cleanup and Lab 08 preparation
+
+- Lab 07 exercise, learner configuration and passing result committed and pushed as `698dcaa`; remote main verified. Original worker file/effective settings restored and owned namespace removed. Evidence: `.local/lab07-final-cleanup.log`.
+- Lab 08 assesses selected cis-1.12 controls 4.1.9/4.1.10 using an original targeted scanner, not a full kube-bench execution. Upstream definitions pinned at `975ae0039595e2558f7cdbc19cc2a7502acacbfb`.
+- Node mutation limited to mode and ownership of the existing kubelet configuration on `cks-worker2`; original metadata, hash, contents and container identity saved before mutation. No configuration edits or restarts needed.
+- QA baseline: 8 passed / 2 failed. Repaired state: 10 / 0. World-readable 0444 regression: 9 / 1, confirming bitmask semantics. Scanner independently returned nonzero for the baseline and zero for the repaired state.
+- Evidence: `.local/lab08-initial.log`, `.local/lab08-initial-scan.log`, `.local/lab08-passing.log`, `.local/lab08-passing-scan.log`, `.local/lab08-regression.log`, `.local/lab08-duplicate-setup.log`, `.local/lab08-rollback.log`.
+- Duplicate setup refused; QA cleanup verified original metadata and content before removing its namespace/state. Shell syntax, Python parsing and Git whitespace checks passed.
+- Fresh unsolved learner state prepared in `cks-lab-08`; recovery files retained in `.local/lab08-state/`. Learner attempt, duration, hints and weak areas unassessed. No claim of full CIS compliance or complete benchmark mapping for Kubernetes v1.37.
+
+### 2026-09-24 — Lab 08 learner verification
+
+- `./labs/08-cis-benchmarks/scan.sh`: both selected cis-1.12 controls passed on the target kubelet configuration file (mode 0600, numeric owner 0:0).
+- `./labs/08-cis-benchmarks/verify.sh`: all 10 checks passed, exit 0. Original file contents and active config path preserved; kubelet, API, three nodes and target health Pod healthy; exec worked.
+- No failed requirements observed in this selected-control assessment. Duration and outside hints not recorded; none provided during grading. No learner or cluster resources changed during verification.
+- Passing these two checks does not establish complete CIS compliance.
